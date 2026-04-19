@@ -1,7 +1,16 @@
-CREATE TABLE IF NOT EXISTS system_config(
-    service_fee DECIMAL(5,2),
-    small_order_fee DECIMAL(5,2)
+-- CREATE TABLE IF NOT EXISTS system_config(
+--     service_fee DECIMAL(5,2),
+--     small_order_fee DECIMAL(5,2)
+-- );
+CREATE TABLE IF NOT EXISTS system_config (
+    config_key VARCHAR(50) PRIMARY KEY,
+    config_value DECIMAL(5,2) NOT NULL
 );
+
+INSERT INTO system_config (config_key, config_value) VALUES ('service_fee', 0.00)
+ON CONFLICT (config_key) DO NOTHING;
+INSERT INTO system_config (config_key, config_value) VALUES ('small_order_fee', 0.00)
+ON CONFLICT (config_key) DO NOTHING;
 -- TODO: add audit table, See required modifications, see unimplemented columns
 ------------------------------USER & CUSTOMER---------------------
 CREATE TABLE IF NOT EXISTS permission(
