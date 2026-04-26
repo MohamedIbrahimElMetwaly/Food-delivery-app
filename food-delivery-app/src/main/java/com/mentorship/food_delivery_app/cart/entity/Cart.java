@@ -1,13 +1,7 @@
 package com.mentorship.food_delivery_app.cart.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import com.mentorship.food_delivery_app.customer.entity.Customer;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,8 +32,9 @@ public class Cart {
     @Column(name = "cart_id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "cart_customer_id", nullable = false)
-    private UUID customerId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_customer_id", nullable = false,updatable = false)
+    private Customer customer;
 
     @Column(name = "is_locked", nullable = false)
     @Builder.Default
