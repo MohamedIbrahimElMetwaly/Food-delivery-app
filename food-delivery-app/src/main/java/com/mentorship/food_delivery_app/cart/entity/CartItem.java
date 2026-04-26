@@ -1,5 +1,6 @@
 package com.mentorship.food_delivery_app.cart.entity;
 
+import com.mentorship.food_delivery_app.restaurant.entity.MenuItem;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -43,8 +44,9 @@ public class CartItem {
     @JoinColumn(name = "cart_item_cart_id", nullable = false)
     private Cart cart;
 
-    @Column(name = "menu_item_id", nullable = false)
-    private UUID menuItemId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_item_cart_id")
+    private MenuItem menuItem;
 
     @Column(name = "cart_item_quantity", nullable = false)
     private int quantity;

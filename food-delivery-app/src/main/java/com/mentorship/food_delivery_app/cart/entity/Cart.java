@@ -1,6 +1,7 @@
 package com.mentorship.food_delivery_app.cart.entity;
 
 import com.mentorship.food_delivery_app.customer.entity.Customer;
+import com.mentorship.food_delivery_app.restaurant.entity.RestaurantBranch;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,8 +41,9 @@ public class Cart {
     @Builder.Default
     private boolean locked = false;
 
-    @Column(name = "cart_current_rest_id")
-    private UUID currentRestaurantBranchId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_current_rest_branch_id")
+    private RestaurantBranch currentRestaurantBranch;
 
     @OneToMany(
             mappedBy = "cart",
