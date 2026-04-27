@@ -8,15 +8,16 @@ import com.mentorship.food_delivery_app.cart.entity.Cart;
 import com.mentorship.food_delivery_app.cart.entity.CartItem;
 import com.mentorship.food_delivery_app.cart.mapper.CartItemMapper;
 import com.mentorship.food_delivery_app.cart.mapper.CartMapper;
-import com.mentorship.food_delivery_app.cart.repository.CartItemRepository;
 import com.mentorship.food_delivery_app.cart.repository.CartRepository;
 import com.mentorship.food_delivery_app.cart.service.ICartService;
+import com.mentorship.food_delivery_app.common.exceptions.ResourceNotFoundException;
 import com.mentorship.food_delivery_app.customer.entity.Customer;
 import com.mentorship.food_delivery_app.customer.service.ICustomerService;
 import com.mentorship.food_delivery_app.restaurant.entity.MenuItem;
 import com.mentorship.food_delivery_app.restaurant.repository.MenuItemRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -56,8 +57,8 @@ public class CartServiceImpl implements ICartService {
 
     @Transactional
     @Override
-    public AddToCartResponse addItemToCart(AddCartItemRequest request) throws Exception {
-        MenuItem menuItem = menuItemRepository.findById(request.item().menuItemId()).orElseThrow();
+    public AddToCartResponse addItemToCart(AddCartItemRequest request)  {
+        MenuItem menuItem = menuItemRepository.findById(request.item().menuItemId()).orElseThrow(()->new ResourceNotFoundException(String.format("Menu Item with id : %s not found",request.item().menuItemId()), HttpStatus.NOT_FOUND.toString()));
         Customer theCustomer = customerService.getCustomerWithCart(request.customerId());
        Cart cart = theCustomer.getCart();
        if(cart == null) {

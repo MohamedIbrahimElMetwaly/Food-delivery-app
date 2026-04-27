@@ -1,10 +1,12 @@
 package com.mentorship.food_delivery_app.cart.entity;
 
+import com.mentorship.food_delivery_app.common.exceptions.ConflictException;
 import com.mentorship.food_delivery_app.customer.entity.Customer;
 import com.mentorship.food_delivery_app.restaurant.entity.MenuItem;
 import com.mentorship.food_delivery_app.restaurant.entity.RestaurantBranch;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,13 +55,13 @@ public class Cart {
 
     // ---- Convenience helpers -------------------------------------------------
 
-    public void addItem(MenuItem menuItem, int quantity) throws Exception {
+    public void addItem(MenuItem menuItem, int quantity) {
             if(this.currentRestaurantBranch != null) {
                 UUID currentRestaurantBranchId = this.getCurrentRestaurantBranch().getId();
                 UUID menuItemRestaurantBranchId = menuItem.getMenu().getRestaurantBranch().getId();
 
                 if(!currentRestaurantBranchId.equals(menuItemRestaurantBranchId)) {
-                    throw new Exception("this item belongs to a different restaurant");
+                    throw new ConflictException("The provided menu item is not associated with the specified restaurant brancا",HttpStatus.CONFLICT.toString());
                 }
             }
 

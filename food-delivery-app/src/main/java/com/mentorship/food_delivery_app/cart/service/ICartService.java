@@ -8,7 +8,7 @@ public interface ICartService {
 
     CreateCartResponse createCart(CreateCartRequest cartRequest);
 
-    AddToCartResponse addItemToCart(AddCartItemRequest request)throws Exception;
+    AddToCartResponse addItemToCart(AddCartItemRequest request);
 
 
 }
