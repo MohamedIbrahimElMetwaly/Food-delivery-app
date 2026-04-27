@@ -1,5 +1,7 @@
 package com.mentorship.food_delivery_app.cart.controller;
 
+import com.mentorship.food_delivery_app.cart.dto.AddCartItemRequest;
+import com.mentorship.food_delivery_app.cart.dto.AddToCartResponse;
 import com.mentorship.food_delivery_app.cart.dto.CreateCartRequest;
 import com.mentorship.food_delivery_app.cart.dto.CreateCartResponse;
 import com.mentorship.food_delivery_app.cart.service.ICartService;
@@ -24,6 +26,11 @@ public class CartController {
 
             return new ResponseEntity<>(cartService.createCart(request), HttpStatus.CREATED);
 
+        }
+
+    @PostMapping("/cart/items")
+    public ResponseEntity<AddToCartResponse> addItemToCart(@Valid @RequestBody AddCartItemRequest request)  {
+            return new ResponseEntity<>(cartService.addItemToCart(request),HttpStatus.OK);
         }
 
     }
