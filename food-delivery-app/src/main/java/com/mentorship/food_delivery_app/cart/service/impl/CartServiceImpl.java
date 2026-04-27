@@ -36,19 +36,7 @@ public class CartServiceImpl implements ICartService {
         Customer theCustomer = customerService.getCustomerWithCart(cartRequest.customerId());
         Cart cart = theCustomer.getCart();
         if (cart == null) {
-           cart = Cart
-                   .builder()
-                   .customer(theCustomer)
-                   .currentRestaurantBranchId(cartRequest.restaurantId())
-                   .build();
-           cartRepository.save(cart);
-
-        }
-        else {
-            if( !cart.getCurrentRestaurantBranchId().equals(cartRequest.restaurantId())) {
-                cart.getItems().clear();
-            }
-            cart.setCurrentRestaurantBranchId(cartRequest.restaurantId());
+            cart = createNewCart(theCustomer);
         }
 
         return cartMapper.toCreateCartResponse(cart);
