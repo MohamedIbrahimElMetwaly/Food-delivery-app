@@ -1,13 +1,10 @@
 package com.mentorship.food_delivery_app.cart.entity;
 
 import com.mentorship.food_delivery_app.customer.entity.Customer;
+import com.mentorship.food_delivery_app.restaurant.entity.MenuItem;
 import com.mentorship.food_delivery_app.restaurant.entity.RestaurantBranch;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,9 +53,33 @@ public class Cart {
 
     // ---- Convenience helpers -------------------------------------------------
 
-    public void addItem(CartItem item) {
-        items.add(item);
-        item.setCart(this);
+    public void addItem(MenuItem menuItem, int quantity) throws Exception {
+            if(this.currentRestaurantBranch != null) {
+                UUID currentRestaurantBranchId = this.getCurrentRestaurantBranch().getId();
+                UUID menuItemRestaurantBranchId = menuItem.getMenu().getRestaurantBranch().getId();
+
+                if(!currentRestaurantBranchId.equals(menuItemRestaurantBranchId)) {
+                    throw new Exception("this item belongs to a different restaurant");
+                }
+            }
+
+            else {
+                this.currentRestaurantBranch = menuItem.getMenu().getRestaurantBranch();
+            }
+
+            this.getItems() .stream()
+                .filter(item -> item.getMenuItem().getId().equals(menuItem.getId()))
+                .findFirst()
+                .ifPresentOrElse(cartItem -> cartItem.setQuantity(cartItem.getQuantity()+quantity),
+                        ()-> {
+                            this.items.add(
+                                    CartItem.builder()
+                                            .cart(this)
+                                            .quantity(quantity)
+                                            .menuItem(menuItem).build());
+
+                        }
+                        );
     }
 
     public void removeItem(CartItem item) {
