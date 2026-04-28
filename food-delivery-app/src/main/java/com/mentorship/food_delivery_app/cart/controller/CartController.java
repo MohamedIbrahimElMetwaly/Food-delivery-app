@@ -35,4 +35,11 @@ public class CartController {
 
         }
 
+    @DeleteMapping("/cart/items")
+    public ResponseEntity<String> deleteCartItem(@Valid @RequestBody DeleteCartItemRequest request)  {
+        cartService.deleteCartItem(request);
+        return ResponseEntity.noContent().build();
+
+    }
+
     }
