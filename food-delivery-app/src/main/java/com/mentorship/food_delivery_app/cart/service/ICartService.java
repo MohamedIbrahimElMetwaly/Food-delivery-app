@@ -10,7 +10,10 @@ public interface ICartService {
     CreateCartResponse createCart(CreateCartRequest cartRequest);
 
     AddToCartResponse addItemToCart(AddCartItemRequest request);
+
     void clearCart(ClearCartRequest cartRequest);
+
+    void  deleteCartItem(DeleteCartItemRequest deleteCartItemRequest);
 
 }
 

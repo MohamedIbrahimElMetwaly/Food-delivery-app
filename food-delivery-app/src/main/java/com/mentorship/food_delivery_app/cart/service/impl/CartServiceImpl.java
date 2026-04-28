@@ -19,6 +19,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Service
 public class CartServiceImpl implements ICartService {
@@ -82,11 +85,39 @@ public class CartServiceImpl implements ICartService {
 
     }
 
+    @Override
+    public void deleteCartItem(DeleteCartItemRequest deleteCartItemRequest) {
+       Cart cart =  validateAndGetCustomerCart(deleteCartItemRequest.customerId(), deleteCartItemRequest.cartId());
+
+       CartItem currentCartItem = cart.getItems().stream()
+               .filter((cartItem)->cartItem.getId().equals(deleteCartItemRequest.cartItemId()))
+               .findFirst().orElseThrow(
+                ()-> new ResourceNotFoundException(String.format("Cart Item with id : %s not found",deleteCartItemRequest.cartItemId())
+                        , HttpStatus.NOT_FOUND.toString())
+        );
+
+      cart.getItems().remove(currentCartItem);
+
+    }
+
     private Cart createNewCart(Customer customer){
         return Cart.builder()
             .customer(customer)
             .build();
 
 }
+
+    private Cart validateAndGetCustomerCart(UUID customerId,UUID cartId){
+
+        Customer theCustomer = customerService.getCustomerWithCart(customerId);
+        Cart cart = theCustomer.getCart();
+        if(cart ==null ){
+            throw new ResourceNotFoundException("the cart is already empty",HttpStatus.NOT_FOUND.toString());
+        }
+        if(cart.getId().equals(cartId)) {
+            throw new CartOwnershipMismatchException("The cart doesn't have the same id as the requested cart.");
+        }
+        return cart;
+    }
 
 }
