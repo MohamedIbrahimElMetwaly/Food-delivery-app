@@ -41,5 +41,10 @@ public class CartController {
         return ResponseEntity.noContent().build();
 
     }
+    @PatchMapping("/items")
+    public ResponseEntity<UpdateQuantityResponse> updateQuantityCartItem(UpdateQuantityRequest request) {
+        UpdateQuantityResponse response = cartService.updateQuantity(request);
+        return ResponseEntity.ok().body(response);
+    }
 
     }
