@@ -2,8 +2,6 @@ package com.mentorship.food_delivery_app.cart.service;
 
 import com.mentorship.food_delivery_app.cart.dto.*;
 
-import java.util.UUID;
-
 public interface ICartService {
 
 
@@ -14,6 +12,9 @@ public interface ICartService {
     void clearCart(ClearCartRequest cartRequest);
 
     void  deleteCartItem(DeleteCartItemRequest deleteCartItemRequest);
+
+    UpdateQuantityResponse updateQuantity(UpdateQuantityRequest updateQuantityRequest);
+
 
 }
 

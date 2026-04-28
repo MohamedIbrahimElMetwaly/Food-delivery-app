@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -100,6 +99,21 @@ public class CartServiceImpl implements ICartService {
 
     }
 
+    @Transactional
+    @Override
+    public UpdateQuantityResponse updateQuantity(UpdateQuantityRequest updateQuantityRequest) {
+
+        Customer theCustomer = customerService.getCustomerWithCart(updateQuantityRequest.customerId());
+        Cart cart = theCustomer.getCart();
+
+        CartItem currentCartItem= validateAndGetCartItem(updateQuantityRequest.cartItemId(), cart);
+
+        currentCartItem.setQuantity(updateQuantityRequest.quantity());
+        cartRepository.save(cart);
+        return cartItemMapper.toUpdateQuantityResponse(currentCartItem);
+
+    }
+
     private Cart createNewCart(Customer customer){
         return Cart.builder()
             .customer(customer)
@@ -118,6 +132,14 @@ public class CartServiceImpl implements ICartService {
             throw new CartOwnershipMismatchException("The cart doesn't have the same id as the requested cart.");
         }
         return cart;
+    }
+    private CartItem validateAndGetCartItem(Long cartItemId,Cart cart){
+       return cart.getItems().stream()
+                .filter((cartItem)->cartItem.getId().equals(cartItemId))
+                .findFirst().orElseThrow(
+                        ()-> new ResourceNotFoundException(String.format("Cart Item with id : %s not found",cartItemId)
+                                , HttpStatus.NOT_FOUND.toString())
+                );
     }
 
 }
