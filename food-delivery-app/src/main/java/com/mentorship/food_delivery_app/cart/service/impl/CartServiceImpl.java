@@ -83,19 +83,15 @@ public class CartServiceImpl implements ICartService {
 
 
     }
-
+    @Transactional
     @Override
     public void deleteCartItem(DeleteCartItemRequest deleteCartItemRequest) {
        Cart cart =  validateAndGetCustomerCart(deleteCartItemRequest.customerId(), deleteCartItemRequest.cartId());
 
-       CartItem currentCartItem = cart.getItems().stream()
-               .filter((cartItem)->cartItem.getId().equals(deleteCartItemRequest.cartItemId()))
-               .findFirst().orElseThrow(
-                ()-> new ResourceNotFoundException(String.format("Cart Item with id : %s not found",deleteCartItemRequest.cartItemId())
-                        , HttpStatus.NOT_FOUND.toString())
-        );
+       CartItem currentCartItem = validateAndGetCartItem(deleteCartItemRequest.cartItemId(), cart);
 
-      cart.getItems().remove(currentCartItem);
+       cart.removeItem(currentCartItem);
+       cartRepository.save(cart);
 
     }
 
@@ -128,7 +124,7 @@ public class CartServiceImpl implements ICartService {
         if(cart ==null ){
             throw new ResourceNotFoundException("the cart is already empty",HttpStatus.NOT_FOUND.toString());
         }
-        if(cart.getId().equals(cartId)) {
+        if(!cart.getId().equals(cartId)) {
             throw new CartOwnershipMismatchException("The cart doesn't have the same id as the requested cart.");
         }
         return cart;
