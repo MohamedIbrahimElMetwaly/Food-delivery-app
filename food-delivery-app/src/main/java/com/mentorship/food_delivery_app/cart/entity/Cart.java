@@ -1,18 +1,12 @@
 package com.mentorship.food_delivery_app.cart.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.mentorship.food_delivery_app.common.exceptions.ConflictException;
+import com.mentorship.food_delivery_app.customer.entity.Customer;
+import com.mentorship.food_delivery_app.restaurant.entity.MenuItem;
+import com.mentorship.food_delivery_app.restaurant.entity.RestaurantBranch;
+import jakarta.persistence.*;
+import lombok.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,15 +32,17 @@ public class Cart {
     @Column(name = "cart_id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "cart_customer_id", nullable = false)
-    private UUID customerId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_customer_id", nullable = false,updatable = false)
+    private Customer customer;
 
     @Column(name = "is_locked", nullable = false)
     @Builder.Default
     private boolean locked = false;
 
-    @Column(name = "cart_current_rest_id")
-    private UUID currentRestaurantBranchId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_current_rest_branch_id")
+    private RestaurantBranch currentRestaurantBranch;
 
     @OneToMany(
             mappedBy = "cart",
@@ -59,9 +55,33 @@ public class Cart {
 
     // ---- Convenience helpers -------------------------------------------------
 
-    public void addItem(CartItem item) {
-        items.add(item);
-        item.setCart(this);
+    public void addItem(MenuItem menuItem, int quantity) {
+            if(this.currentRestaurantBranch != null) {
+                UUID currentRestaurantBranchId = this.getCurrentRestaurantBranch().getId();
+                UUID menuItemRestaurantBranchId = menuItem.getMenu().getRestaurantBranch().getId();
+
+                if(!currentRestaurantBranchId.equals(menuItemRestaurantBranchId)) {
+                    throw new ConflictException("The provided menu item is not associated with the specified restaurant brancا",HttpStatus.CONFLICT.toString());
+                }
+            }
+
+            else {
+                this.currentRestaurantBranch = menuItem.getMenu().getRestaurantBranch();
+            }
+
+            this.getItems() .stream()
+                .filter(item -> item.getMenuItem().getId().equals(menuItem.getId()))
+                .findFirst()
+                .ifPresentOrElse(cartItem -> cartItem.setQuantity(cartItem.getQuantity()+quantity),
+                        ()-> {
+                            this.items.add(
+                                    CartItem.builder()
+                                            .cart(this)
+                                            .quantity(quantity)
+                                            .menuItem(menuItem).build());
+
+                        }
+                        );
     }
 
     public void removeItem(CartItem item) {

@@ -66,7 +66,39 @@ public class GlobalExceptionHandler {
                         request.getRequestURI()));
     }
 
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflictException(
+            ConflictException ex,
+            HttpServletRequest request) {
+
+        ErrorResponse error = ErrorResponse.of(
+                ex.getCode(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
     // ---- 404: resource not found ---------------------------------------------
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFound(
+            ResourceNotFoundException ex,
+            HttpServletRequest request) {
+
+        ErrorResponse error = ErrorResponse.of(
+                ex.getCode(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+
+
+
 
     @ExceptionHandler(CartNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleCartNotFound(

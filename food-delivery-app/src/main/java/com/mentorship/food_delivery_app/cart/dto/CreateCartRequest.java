@@ -6,6 +6,7 @@ import java.util.UUID;
 
 /** Body for {@code POST /api/v1/cart/create}. */
 public record CreateCartRequest(
-        @NotNull UUID customerId
+        @NotNull UUID customerId,
+        @NotNull UUID restaurantId
 ) {
 }
