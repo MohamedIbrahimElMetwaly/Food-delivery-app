@@ -55,7 +55,7 @@ public class CartServiceImpl implements ICartService {
            cart = createNewCart(theCustomer);
        }
 
-        cart.addItem(menuItem, request.item().quantity());
+        cart.addItem(menuItem, request.item().quantity(), request.item().note());
 
         cartRepository.save(cart);
 
@@ -64,6 +64,7 @@ public class CartServiceImpl implements ICartService {
 
         return cartItemMapper.toAddToCartResponse(theCurrentCartItem);
     }
+
     @Transactional
     @Override
     public void clearCart(ClearCartRequest cartRequest) {
@@ -78,11 +79,8 @@ public class CartServiceImpl implements ICartService {
         cartItemRepository.deleteAllByCartId(cart.getId());
         cart.setCurrentRestaurantBranch(null);
         cart.setLocked(false);
-
-
-
-
     }
+
     @Transactional
     @Override
     public void deleteCartItem(DeleteCartItemRequest deleteCartItemRequest) {
@@ -114,8 +112,7 @@ public class CartServiceImpl implements ICartService {
         return Cart.builder()
             .customer(customer)
             .build();
-
-}
+    }
 
     private Cart validateAndGetCustomerCart(UUID customerId,UUID cartId){
 

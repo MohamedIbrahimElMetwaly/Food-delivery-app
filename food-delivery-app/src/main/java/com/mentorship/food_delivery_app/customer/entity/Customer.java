@@ -19,7 +19,7 @@ public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "customer_id", updatable = false, nullable = false)
-    private UUID customerId;
+    private UUID id;
 
     @Column(name = "customer_user_id", nullable = false, unique = true)
     private UUID customerUserId;

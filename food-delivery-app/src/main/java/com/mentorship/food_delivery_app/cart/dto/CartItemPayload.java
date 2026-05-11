@@ -14,6 +14,7 @@ import java.util.UUID;
  */
 public record CartItemPayload(
         @JsonProperty("itemId") @NotNull UUID menuItemId,
-        @Min(1) int quantity
+        @Min(1) int quantity,
+        String note
 ) {
 }

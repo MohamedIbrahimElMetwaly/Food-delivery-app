@@ -6,6 +6,7 @@ public record AddToCartResponse(
         UUID cartId,
         Long cartItemId,
         UUID menuItemId,
-        int quantity
+        int quantity,
+        String note
 ) {
 }

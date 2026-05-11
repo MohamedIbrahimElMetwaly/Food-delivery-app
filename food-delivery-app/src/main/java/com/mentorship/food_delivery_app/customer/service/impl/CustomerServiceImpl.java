@@ -16,11 +16,11 @@ public class CustomerServiceImpl implements ICustomerService {
 
     @Override
     public Customer getCustomerWithCart(UUID customerId) {
-        return customerRepository.findCustomerWithCartByCustomerId(customerId).orElseThrow();
+        return customerRepository.findCustomerWithCartById(customerId).orElseThrow();
     }
 
     @Override
     public Customer getCustomerWithFullCart(UUID customerId) {
-        return customerRepository.findCustomerWithFullCartInfoByCustomerId(customerId).orElseThrow();
+        return customerRepository.findCustomerWithFullCartInfoById(customerId).orElseThrow();
     }
 }

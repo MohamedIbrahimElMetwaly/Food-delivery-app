@@ -41,7 +41,7 @@ public class Cart {
     private boolean locked = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_current_rest_branch_id")
+    @JoinColumn(name = "cart_current_rest_id")
     private RestaurantBranch currentRestaurantBranch;
 
     @OneToMany(
@@ -55,7 +55,7 @@ public class Cart {
 
     // ---- Convenience helpers -------------------------------------------------
 
-    public void addItem(MenuItem menuItem, int quantity) {
+    public void addItem(MenuItem menuItem, int quantity, String note) {
             if(this.currentRestaurantBranch != null) {
                 UUID currentRestaurantBranchId = this.getCurrentRestaurantBranch().getId();
                 UUID menuItemRestaurantBranchId = menuItem.getMenu().getRestaurantBranch().getId();
@@ -78,8 +78,8 @@ public class Cart {
                                     CartItem.builder()
                                             .cart(this)
                                             .quantity(quantity)
-                                            .menuItem(menuItem).build());
-
+                                            .menuItem(menuItem)
+                                            .note(note).build());
                         }
                         );
     }
