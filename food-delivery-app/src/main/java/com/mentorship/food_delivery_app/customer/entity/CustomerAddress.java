@@ -17,7 +17,7 @@ public class CustomerAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "customer_address_id", updatable = false, nullable = false)
-    private UUID customerAddressId;
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_address_customer_id")

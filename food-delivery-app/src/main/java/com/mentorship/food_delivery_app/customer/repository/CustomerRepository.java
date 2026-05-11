@@ -11,11 +11,11 @@ import java.util.UUID;
 
 public interface CustomerRepository extends JpaRepository<Customer, UUID> {
     @EntityGraph(attributePaths = {"cart"})
-    Optional<Customer> findCustomerWithCartByCustomerId(UUID customerId);
+    Optional<Customer> findCustomerWithCartById(UUID customerId);
 
 
     @EntityGraph(attributePaths = {"cart", "cart.cartItems"})
-    Optional<Customer> findCustomerWithFullCartInfoByCustomerId(UUID customerId);
+    Optional<Customer> findCustomerWithFullCartInfoById(UUID customerId);
 
     List<Customer> cart(Cart cart);
 }

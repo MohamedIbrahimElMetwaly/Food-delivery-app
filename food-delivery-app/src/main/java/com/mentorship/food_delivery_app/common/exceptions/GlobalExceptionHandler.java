@@ -6,6 +6,8 @@ import com.mentorship.food_delivery_app.cart.exceptions.CartNotFoundException;
 import com.mentorship.food_delivery_app.cart.exceptions.CartOwnershipMismatchException;
 import com.mentorship.food_delivery_app.common.dto.ErrorResponse;
 import com.mentorship.food_delivery_app.common.dto.ErrorResponse.FieldError;
+import com.mentorship.food_delivery_app.order.exceptions.EmptyCartException;
+import com.mentorship.food_delivery_app.order.exceptions.InvalidCartException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -64,6 +66,22 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 ErrorResponse.of("MALFORMED_JSON", "Request body is malformed or missing",
                         request.getRequestURI()));
+    }
+
+    @ExceptionHandler(EmptyCartException.class)
+    public ResponseEntity<ErrorResponse> handleEmptyCart(
+            EmptyCartException ex, HttpServletRequest request) {
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                ErrorResponse.of("EMPTY_CART", ex.getMessage(), request.getRequestURI()));
+    }
+
+    @ExceptionHandler(InvalidCartException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidCart(
+            InvalidCartException ex, HttpServletRequest request) {
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                ErrorResponse.of("INVALID_CART", ex.getMessage(), request.getRequestURI()));
     }
 
     @ExceptionHandler(ConflictException.class)
