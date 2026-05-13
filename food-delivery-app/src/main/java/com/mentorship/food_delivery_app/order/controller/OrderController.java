@@ -2,6 +2,7 @@ package com.mentorship.food_delivery_app.order.controller;
 
 import com.mentorship.food_delivery_app.order.dto.CheckoutRequest;
 import com.mentorship.food_delivery_app.order.dto.CheckoutResponse;
+import com.mentorship.food_delivery_app.order.dto.OrderDetailsResponse;
 import com.mentorship.food_delivery_app.order.service.IOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +26,9 @@ public class OrderController {
     public ResponseEntity<Void> cancelOrder(@PathVariable UUID orderId) {
         orderService.cancelOrder(orderId);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderDetailsResponse> getOrder(@PathVariable UUID orderId) {
+        return ResponseEntity.ok(orderService.getOrderDetails(orderId));
     }
 }

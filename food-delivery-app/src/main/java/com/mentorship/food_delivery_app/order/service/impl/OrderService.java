@@ -7,6 +7,7 @@ import com.mentorship.food_delivery_app.customer.entity.Customer;
 import com.mentorship.food_delivery_app.customer.service.ICustomerService;
 import com.mentorship.food_delivery_app.order.dto.CheckoutRequest;
 import com.mentorship.food_delivery_app.order.dto.CheckoutResponse;
+import com.mentorship.food_delivery_app.order.dto.OrderDetailsResponse;
 import com.mentorship.food_delivery_app.order.entity.OrderItem;
 import com.mentorship.food_delivery_app.order.entity.OrderStatus;
 import com.mentorship.food_delivery_app.order.entity.OrderTracking;
@@ -153,6 +154,14 @@ public class OrderService implements IOrderService {
                 .orderTrackingDescription("Order cancelled by customer")
                 .build();
         orderTrackingRepository.save(tracking);
+    }
+
+    @Override
+    public OrderDetailsResponse getOrderDetails(UUID orderId) {
+        Orders order = orderRepository.findByIdWithItems(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found", "404"));
+
+        return orderMapper.toOrderDetailsResponse(order);
     }
 
     private Orders createNewOrder(Customer customer) {

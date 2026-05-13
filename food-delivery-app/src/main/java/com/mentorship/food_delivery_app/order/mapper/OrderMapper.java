@@ -1,6 +1,9 @@
 package com.mentorship.food_delivery_app.order.mapper;
 
 import com.mentorship.food_delivery_app.order.dto.CheckoutResponse;
+import com.mentorship.food_delivery_app.order.dto.OrderDetailsResponse;
+import com.mentorship.food_delivery_app.order.dto.OrderItemDto;
+import com.mentorship.food_delivery_app.order.entity.OrderItem;
 import com.mentorship.food_delivery_app.order.entity.Orders;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -24,4 +27,12 @@ public interface OrderMapper {
     @Mapping(target = "orderId",        source = "id")
     @Mapping(target = "restaurantName", source = "restaurantBranch.restaurant.name")
     CheckoutResponse toCreateOrderResponse(Orders order);
+
+    @Mapping(target = "orderId", source = "id")
+    @Mapping(target = "status", source = "orderStatus.name")
+    @Mapping(target = "items", source = "items")
+    OrderDetailsResponse toOrderDetailsResponse(Orders order);
+
+    @Mapping(target = "itemName", source = "menuItem.name")
+    OrderItemDto toOrderItemDto(OrderItem item);
 }
