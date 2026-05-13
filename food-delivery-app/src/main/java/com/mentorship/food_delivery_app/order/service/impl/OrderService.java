@@ -128,6 +128,33 @@ public class OrderService implements IOrderService {
         return orderMapper.toCreateOrderResponse(order);
     }
 
+
+
+    @Transactional
+    @Override
+    public void cancelOrder(UUID orderId) {
+        Orders order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found", "404"));
+
+        String currentStatus = order.getOrderStatus().getName();
+        if (List.of("OUT_FOR_DELIVERY", "DELIVERED", "CANCELLED").contains(currentStatus)) {
+            throw new IllegalStateException("Cannot cancel order in status: " + currentStatus);
+        }
+
+        OrderStatus cancelledStatus = orderStatusRepository.findByName("CANCELLED")
+                .orElseThrow(() -> new IllegalStateException("Seed missing: CANCELLED status not found"));
+
+        order.setOrderStatus(cancelledStatus);
+        orderRepository.save(order);
+
+        OrderTracking tracking = OrderTracking.builder()
+                .order(order)
+                .orderStatus(cancelledStatus)
+                .orderTrackingDescription("Order cancelled by customer")
+                .build();
+        orderTrackingRepository.save(tracking);
+    }
+
     private Orders createNewOrder(Customer customer) {
         return Orders.builder()
                 .customer(customer)
